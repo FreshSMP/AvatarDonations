@@ -6,7 +6,6 @@ import me.aglerr.donations.managers.DonationGoal;
 import me.aglerr.donations.objects.Product;
 import me.aglerr.donations.objects.QueueDonation;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;

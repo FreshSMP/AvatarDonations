@@ -12,7 +12,6 @@ import me.aglerr.donations.managers.DependencyManager;
 import me.aglerr.donations.objects.QueueDonation;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.skinsrestorer.api.SkinsRestorer;
-import net.skinsrestorer.api.SkinsRestorerProvider;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -57,7 +56,7 @@ public class Utils {
             SkinsRestorer api = DonationPlugin.getSkinsApi();
             Optional<SkinIdentifier> optional = api.getPlayerStorage().getSkinIdOfPlayer(player.getUniqueId());
             // If the player is wearing skin, get the skin name
-            url = url + (optional.isPresent() ? optional.get().getIdentifier() : player.getName());
+            url = url + (optional.map(SkinIdentifier::getIdentifier).orElseGet(player::getName));
         } else {
             // Code if the server doesn't use skins restorer
             url = url + (ConfigValue.USE_UUID ? player.getUniqueId().toString() : player.getName());
@@ -75,9 +74,9 @@ public class Utils {
             // Get the buffered image from the url
             BufferedImage image = ImageIO.read(url);
             // Check if broadcast avatar is enabled
-            if(ConfigValue.BROADCAST_AVATAR_ENABLED){
+            if (ConfigValue.BROADCAST_AVATAR_ENABLED) {
                 // Check if hex color is enabled
-                if(DonationPlugin.HEX_AVAILABLE){
+                if (DonationPlugin.HEX_AVAILABLE) {
                     // Create an image message with hex color
                     ImageMessageHex imageMessageHex = new ImageMessageHex(image, 8, ImageChar.BLOCK.getChar())
                             // Append the additional text
@@ -97,7 +96,7 @@ public class Utils {
                 // Code when avatar message is disabled
                 //---------------------------------------------
                 // Check if the hex color is enabled
-                if(DonationPlugin.HEX_AVAILABLE){
+                if (DonationPlugin.HEX_AVAILABLE) {
                     // First, loop through all online players
                     Bukkit.getOnlinePlayers().forEach(player ->
                             // Now, loop through all the messages
@@ -116,7 +115,7 @@ public class Utils {
         }
     }
 
-    public static String getProgressBar(int current, int max, int totalBars, char symbol, ChatColor completedColor, ChatColor notCompletedColor){
+    public static String getProgressBar(int current, int max, int totalBars, char symbol, ChatColor completedColor, ChatColor notCompletedColor) {
         float percent = (float) current/max;
         int progressBars = (int) (totalBars * percent);
 

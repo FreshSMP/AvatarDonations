@@ -53,13 +53,6 @@ public class ImageMessageHex {
         g2d.drawImage(scaled, 0, 0, null);
         g2d.dispose();
         return resized;
-        /*AffineTransform af = new AffineTransform();
-        af.scale(
-                width / (double) originalImage.getWidth(),
-                height / (double) originalImage.getHeight());
-
-        AffineTransformOp operation = new AffineTransformOp(af, Image.SCALE_SMOOTH);
-        return operation.filter(originalImage, null);*/
     }
 
     private String[] toImgMessage(Color[][] colors, char imgchar) {
@@ -67,13 +60,13 @@ public class ImageMessageHex {
 
         for (int y = 0; y < colors[0].length; y++) {
             StringBuilder line = new StringBuilder();
-            for (int x = 0; x < colors.length; x++) {
-                Color color = colors[x][y];
+            for (Color[] value : colors) {
+                Color color = value[y];
                 // convert to minedown-styled color string
                 if (color != null) {
                     line.append("&#")
-                            .append(colorToHex(color))
-                            .append(imgchar);
+                          .append(colorToHex(color))
+                          .append(imgchar);
                 } else {
                     line.append(TRANSPARENT_CHAR);
                 }
@@ -96,7 +89,6 @@ public class ImageMessageHex {
         }
         return this;
     }
-
 
     public void sendToPlayers() {
         Bukkit.getOnlinePlayers().forEach(player -> {

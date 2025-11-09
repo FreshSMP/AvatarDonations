@@ -23,12 +23,10 @@ public class SendCommand extends SubCommand {
 
     @Override
     public List<String> parseTabCompletion(DonationPlugin plugin, CommandSender sender, String[] args) {
-        if(args.length == 2){
+        if (args.length == 2) {
             return null;
         }
-        if(args.length == 3){
 
-        }
         return new ArrayList<>();
     }
 
@@ -45,7 +43,7 @@ public class SendCommand extends SubCommand {
         // Get the product from the command argument
         Product product = productManager.getProduct(args[2]);
         // Return if there is no product with that name
-        if(product == null){
+        if (product == null) {
             sender.sendMessage(Common.color(ConfigValue.INVALID_PRODUCT));
             return;
         }

@@ -27,6 +27,9 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 import javax.net.ssl.HttpsURLConnection;
+
+import com.tcoded.folialib.impl.PlatformScheduler;
+import me.aglerr.donations.DonationPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -37,6 +40,8 @@ public class Metrics {
 
     private final Plugin plugin;
 
+    private final PlatformScheduler scheduler;
+    
     private final MetricsBase metricsBase;
 
     /**
@@ -48,6 +53,7 @@ public class Metrics {
      */
     public Metrics(JavaPlugin plugin, int serviceId) {
         this.plugin = plugin;
+        this.scheduler = DonationPlugin.scheduler();
         // Get the config file
         File bStatsFolder = new File(plugin.getDataFolder().getParentFile(), "bStats");
         File configFile = new File(bStatsFolder, "config.yml");
@@ -87,7 +93,7 @@ public class Metrics {
                         enabled,
                         this::appendPlatformData,
                         this::appendServiceData,
-                        submitDataTask -> Bukkit.getScheduler().runTask(plugin, submitDataTask),
+                        submitDataTask -> scheduler.runNextTick(task -> submitDataTask.run()),
                         plugin::isEnabled,
                         (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error),
                         (message) -> this.plugin.getLogger().log(Level.INFO, message),

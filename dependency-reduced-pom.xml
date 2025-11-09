@@ -16,7 +16,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.13.0</version>
+        <version>3.14.1</version>
         <configuration>
           <source>21</source>
           <target>21</target>
@@ -24,7 +24,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.6.0</version>
+        <version>3.6.1</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -34,20 +34,39 @@
           </execution>
         </executions>
         <configuration>
+          <artifactSet>
+            <includes>
+              <include>com.tcoded:FoliaLib</include>
+              <include>com.github.mdaffa48:MDLib</include>
+            </includes>
+          </artifactSet>
           <relocations>
             <relocation>
-              <pattern>me.aglerr.mdlib</pattern>
-              <shadedPattern>me.aglerr.donation.mdlib</shadedPattern>
+              <pattern>com.tcoded.folialib</pattern>
+              <shadedPattern>me.aglerr.donations.reloc.libs.folialib</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>com.muhammaddaffa.mdlib</pattern>
+              <shadedPattern>me.aglerr.donations.reloc.mdlib</shadedPattern>
             </relocation>
           </relocations>
+          <minimizeJar>false</minimizeJar>
         </configuration>
       </plugin>
     </plugins>
   </build>
   <repositories>
     <repository>
+      <id>papermc</id>
+      <url>https://repo.papermc.io/repository/maven-public/</url>
+    </repository>
+    <repository>
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+    </repository>
+    <repository>
+      <id>tcoded-releases</id>
+      <url>https://repo.tcoded.com/releases</url>
     </repository>
     <repository>
       <id>codemc-releases</id>
@@ -64,21 +83,27 @@
   </repositories>
   <dependencies>
     <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
-      <version>1.21.1-R0.1-SNAPSHOT</version>
+      <groupId>io.papermc.paper</groupId>
+      <artifactId>paper-api</artifactId>
+      <version>1.21.8-R0.1-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>dev.jorel</groupId>
+      <artifactId>commandapi-paper-shade</artifactId>
+      <version>11.0.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>net.skinsrestorer</groupId>
       <artifactId>skinsrestorer-api</artifactId>
-      <version>15.0.3</version>
+      <version>15.8.2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>me.clip</groupId>
       <artifactId>placeholderapi</artifactId>
-      <version>2.11.5</version>
+      <version>2.11.6</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

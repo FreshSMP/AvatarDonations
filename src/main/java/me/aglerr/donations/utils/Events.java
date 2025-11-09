@@ -2,6 +2,7 @@ package me.aglerr.donations.utils;
 
 import com.muhammaddaffa.mdlib.utils.Common;
 import com.muhammaddaffa.mdlib.xseries.XSound;
+import com.tcoded.folialib.impl.PlatformScheduler;
 import me.aglerr.donations.DonationPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -16,6 +17,8 @@ import java.util.Optional;
 
 public class Events {
 
+    private static final PlatformScheduler scheduler = DonationPlugin.scheduler();
+
     private static final DonationPlugin plugin = JavaPlugin.getPlugin(DonationPlugin.class);
 
     public static void playAllEvents(OfflinePlayer player){
@@ -28,7 +31,7 @@ public class Events {
     public static void eventEffects(){
         FileConfiguration config = DonationPlugin.DEFAULT_CONFIG.getConfig();
         // Return if the effect event is disabled
-        if(!config.getBoolean("events.effect.enabled")) {
+        if (!config.getBoolean("events.effect.enabled")) {
             return;
         }
         // Get all the effects
@@ -36,12 +39,12 @@ public class Events {
         // Loop through all online players
         Bukkit.getOnlinePlayers().forEach(player -> {
             // Loop through all effects
-            for(String effectString : effects){
+            for (String effectString : effects) {
                 String[] effectSection = effectString.split(";");
                 // Get the effect type
                 PotionEffectType effectType = PotionEffectType.getByName(effectSection[0]);
-                // Skip if the effect type is doesn't exist
-                if(effectType == null) continue;
+                // Skip if the effect type doesn't exist
+                if (effectType == null) continue;
                 // Get the amplifier of the effect
                 int amplifier = Integer.parseInt(effectSection[1]) + 1;
                 // Get the duration in seconds
@@ -49,14 +52,14 @@ public class Events {
                 // Create the potion effect
                 PotionEffect potionEffect = new PotionEffect(effectType, duration, amplifier);
                 // First, remove all potion effect if exist
-                player.removePotionEffect(effectType);
+                scheduler.runAtEntity(player, task -> player.removePotionEffect(effectType));
                 // Add the potion effect to the player
-                player.addPotionEffect(potionEffect);
+                scheduler.runAtEntity(player, task -> player.addPotionEffect(potionEffect));
             }
         });
     }
 
-    public static void eventSound(){
+    public static void eventSound() {
         FileConfiguration config = DonationPlugin.DEFAULT_CONFIG.getConfig();
         // Get all the sounds
         List<String> sounds = config.getStringList("events.sounds");
@@ -86,10 +89,10 @@ public class Events {
         });
     }
 
-    public static void eventTitleBar(OfflinePlayer offlinePlayer){
+    public static void eventTitleBar(OfflinePlayer offlinePlayer) {
         FileConfiguration config = DonationPlugin.DEFAULT_CONFIG.getConfig();
         // Return if the title bar event is disabled
-        if(!config.getBoolean("events.titleBar.enabled")) return;
+        if (!config.getBoolean("events.titleBar.enabled")) return;
         // Get the title
         String title = Common.color(config.getString("events.titleBar.title")
                 .replace("{player}", offlinePlayer.getName()));
@@ -112,11 +115,11 @@ public class Events {
     public static void eventCommand(OfflinePlayer offlinePlayer){
         FileConfiguration config = DonationPlugin.DEFAULT_CONFIG.getConfig();
         // Return if the command event is disabled
-        if(!config.getBoolean("events.command.enabled")) return;
+        if (!config.getBoolean("events.command.enabled")) return;
         // Loop through all the commands
         config.getStringList("events.command.commands").forEach(command ->
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command
-                        .replace("{player}", offlinePlayer.getName())));
+                scheduler.runNextTick(task -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command
+                        .replace("{player}", offlinePlayer.getName()))));
     }
 
 }

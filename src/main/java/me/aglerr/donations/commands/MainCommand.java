@@ -1,34 +1,23 @@
 package me.aglerr.donations.commands;
 
-import com.muhammaddaffa.mdlib.commandapi.CommandAPICommand;
-import com.muhammaddaffa.mdlib.commandapi.arguments.ArgumentSuggestions;
-import com.muhammaddaffa.mdlib.commandapi.arguments.OfflinePlayerArgument;
-import com.muhammaddaffa.mdlib.commandapi.arguments.PlayerArgument;
-import com.muhammaddaffa.mdlib.commandapi.arguments.StringArgument;
-import com.muhammaddaffa.mdlib.utils.Common;
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
+import dev.jorel.commandapi.arguments.PlayerProfileArgument;
+import dev.jorel.commandapi.arguments.StringArgument;
 import com.muhammaddaffa.mdlib.utils.Placeholder;
-import me.aglerr.donations.ConfigValue;
 import me.aglerr.donations.DonationPlugin;
-import me.aglerr.donations.commands.abstraction.SubCommand;
-import me.aglerr.donations.commands.subcommand.ReloadCommand;
-import me.aglerr.donations.commands.subcommand.SendCommand;
 import me.aglerr.donations.managers.ProductManager;
 import me.aglerr.donations.managers.QueueManager;
 import me.aglerr.donations.objects.Product;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import com.destroystokyo.paper.profile.PlayerProfile;
+import org.bukkit.Bukkit;
 
-import java.util.*;
+import java.util.List;
 
 public class MainCommand {
 
-    private CommandAPICommand command;
+    private final CommandAPICommand command;
 
     public MainCommand() {
         this.command = new CommandAPICommand("donations")
@@ -52,12 +41,10 @@ public class MainCommand {
 
     private void getSubCommandSend() {
         this.command.withSubcommand(new CommandAPICommand("send")
-                        .withArguments(new OfflinePlayerArgument("target"))
+                        .withArguments(new PlayerProfileArgument("target"))
                         .withArguments(new StringArgument("product")
-                                .replaceSuggestions(ArgumentSuggestions.strings(info -> {
-                                    return DonationPlugin.getInstance().getProductManager()
-                                            .getListOfProductName().toArray(String[]::new);
-                                })))
+                                .replaceSuggestions(ArgumentSuggestions.strings(info -> DonationPlugin.getInstance().getProductManager()
+                                        .getListOfProductName().toArray(String[]::new))))
                 .withPermission("donations.admin")
                 .executes((sender, args) -> {
                     if (!(sender.hasPermission("donations.admin"))) {
@@ -68,8 +55,29 @@ public class MainCommand {
                     // Get the product manager
                     ProductManager productManager = DonationPlugin.getInstance().getProductManager();
 
-                    // Get all Player Variable
-                    OfflinePlayer target = (OfflinePlayer) args.get("target");
+                    // PlayerProfileArgument returns List<PlayerProfile>
+                    @SuppressWarnings("unchecked")
+                    List<PlayerProfile> profiles = (List<PlayerProfile>) args.get("target");
+                    if (profiles == null || profiles.isEmpty()) {
+                        DonationPlugin.DEFAULT_CONFIG.sendMessage(sender, "messages.invalidTarget");
+                        return;
+                    }
+                    if (profiles.size() > 1) {
+                        DonationPlugin.DEFAULT_CONFIG.sendMessage(sender, "messages.tooManyTargets");
+                        return;
+                    }
+
+                    PlayerProfile pp = profiles.get(0);
+                    OfflinePlayer target;
+                    if (pp.getId() != null) {
+                        target = Bukkit.getOfflinePlayer(pp.getId());
+                    } else if (pp.getName() != null) {
+                        target = Bukkit.getOfflinePlayer(pp.getName());
+                    } else {
+                        DonationPlugin.DEFAULT_CONFIG.sendMessage(sender, "messages.invalidTarget");
+                        return;
+                    }
+
                     String string = (String) args.get("product");
 
                     // Get the product from the command argument

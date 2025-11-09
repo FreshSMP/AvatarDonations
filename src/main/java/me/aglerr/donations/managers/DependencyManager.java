@@ -19,8 +19,9 @@ public class DependencyManager {
     }
 
     protected static void hookPlaceholderAPI(){
-        if(PLACEHOLDER_API_ENABLED)
+        if (PLACEHOLDER_API_ENABLED) {
             new DonationExpansion().register();
+        }
     }
 
 }

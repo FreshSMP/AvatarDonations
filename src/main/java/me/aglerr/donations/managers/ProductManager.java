@@ -1,17 +1,15 @@
 package me.aglerr.donations.managers;
 
-import com.muhammaddaffa.mdlib.utils.Common;
 import com.muhammaddaffa.mdlib.utils.Logger;
 import me.aglerr.donations.DonationPlugin;
 import me.aglerr.donations.objects.Product;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class ProductManager {
 
@@ -22,15 +20,15 @@ public class ProductManager {
         return this.productList.get(product);
     }
 
-    public void addProduct(String id, Product product){
+    public void addProduct(String id, Product product) {
         this.productList.put(id, product);
     }
 
-    public Set<String> getListOfProductName(){
+    public Set<String> getListOfProductName() {
         return this.productList.keySet();
     }
 
-    public void reloadProduct(){
+    public void reloadProduct() {
         // Clear all loaded product
         productList.clear();
         // Load them back up
@@ -61,7 +59,6 @@ public class ProductManager {
         }
     }
 
-
     public void loadProduct(String id, ConfigurationSection section) {
         String displayName = section.getString("displayName");
         double price = section.getDouble("price");
@@ -72,32 +69,4 @@ public class ProductManager {
         Logger.info("Successfully loaded '" +id+ "'");
     }
 
-
-
-        /*public Product getProduct(String productName){
-        return productList.stream().filter(product -> product.getName().equalsIgnoreCase(productName))
-                .findAny().orElse(null);
-        }*/
-
-
-        /*public void loadProduct(){
-        FileConfiguration config = DonationPlugin.PRODUCT_CONFIG.getConfig();
-        // Send a console message
-        Logger.info("&rLoading all products...");
-        // Return if there are no products
-        if(!config.isConfigurationSection("products")){
-            Logger.info("&cFailed, because there are no products!");
-            return;
-        }
-        // If there are products, loop through the config section
-        for (String productName : config.getConfigurationSection("products").getKeys(false)){
-            String displayName = config.getString("products." + productName + ".displayName");
-            double price = config.getDouble("products." + productName + ".price");
-            // After getting all the values, store them into the list
-            productList.add(new Product(productName, displayName, price));
-            // Log to the console
-            Logger.info("&rLoaded " + productName + " product.");
-        }
-        Logger.info("&rSuccessfully loaded all products!");
-    }*/
 }

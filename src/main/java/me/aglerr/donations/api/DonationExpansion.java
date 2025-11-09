@@ -20,25 +20,25 @@ public class DonationExpansion extends PlaceholderExpansion {
     }
 
     /**
-     * Because this is a internal class, this check is not needed
+     * Because this is an internal class, this check is not needed
      * and we can simply return {@code true}
      *
      * @return Always true since it's an internal class.
      */
     @Override
-    public boolean canRegister(){
+    public boolean canRegister() {
         return true;
     }
 
     /**
      * The name of the person who created this expansion should go here.
-     * <br>For convienience do we return the author from the plugin.yml
+     * <br>For convenience do we return the author from the plugin.yml
      *
      * @return The name of the author as a String.
      */
     @NotNull
     @Override
-    public String getAuthor(){
+    public String getAuthor() {
         return "aglerr";
     }
 
@@ -53,7 +53,7 @@ public class DonationExpansion extends PlaceholderExpansion {
      */
     @NotNull
     @Override
-    public String getIdentifier(){
+    public String getIdentifier() {
         return "donations";
     }
 
@@ -67,7 +67,7 @@ public class DonationExpansion extends PlaceholderExpansion {
      */
     @NotNull
     @Override
-    public String getVersion(){
+    public String getVersion() {
         return "1.0.0";
     }
 
@@ -85,29 +85,29 @@ public class DonationExpansion extends PlaceholderExpansion {
      * @return possibly-null String of the requested identifier.
      */
     @Override
-    public String onPlaceholderRequest(Player player, @NotNull String identifier){
+    public String onPlaceholderRequest(Player player, @NotNull String identifier) {
 
-        if(player == null){
+        if (player == null) {
             return "";
         }
 
         // %donations_donation_current%
-        if(identifier.equalsIgnoreCase("donation_current")) {
+        if (identifier.equalsIgnoreCase("donation_current")) {
             return DonationGoal.getCurrentDonation();
         }
 
         // %donations__donation_goal%
-        if(identifier.equalsIgnoreCase("donation_goal")){
+        if (identifier.equalsIgnoreCase("donation_goal")) {
             return DonationGoal.getDonationGoal();
         }
 
         // %donations_donation_percentage%
-        if(identifier.equalsIgnoreCase("donation_percentage")){
+        if (identifier.equalsIgnoreCase("donation_percentage")) {
             return DonationGoal.getDonationPercentage();
         }
 
         // %donations_donation_progressbar%
-        if(identifier.equalsIgnoreCase("donation_progressbar")) {
+        if (identifier.equalsIgnoreCase("donation_progressbar")) {
             return DonationGoal.getProgressBar();
         }
 

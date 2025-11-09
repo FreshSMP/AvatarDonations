@@ -15,7 +15,7 @@ public class DonationPerformEvent extends Event implements Cancellable {
     private boolean cancelled = false;
     @NotNull private final QueueDonation donation;
 
-    public DonationPerformEvent(@NotNull QueueDonation donation){
+    public DonationPerformEvent(@NotNull QueueDonation donation) {
         this.donation = donation;
     }
 
@@ -55,7 +55,7 @@ public class DonationPerformEvent extends Event implements Cancellable {
      *
      * @return - A boolean to check if the donations successfully removed
      */
-    public boolean removeFromQueue(){
+    public boolean removeFromQueue() {
         // Get the queue manager
         QueueManager queueManager = DonationPlugin.getInstance().getQueueManager();
         // Remove the donation from the queue

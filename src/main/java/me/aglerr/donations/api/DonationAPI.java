@@ -19,7 +19,7 @@ public class DonationAPI {
      * @return A {@link me.aglerr.donations.objects.Product} object to perform a donation
      */
     @Nullable
-    public static Product getProduct(String productName){
+    public static Product getProduct(String productName) {
         // Get the product manager
         ProductManager productManager = DonationPlugin.getInstance().getProductManager();
         // Get the product from the list, will return null if it doesn't exist
@@ -32,7 +32,7 @@ public class DonationAPI {
      * @param player - A {@link org.bukkit.OfflinePlayer}
      * @param product - A {@link me.aglerr.donations.objects.Product}
      */
-    public static void performDonation(OfflinePlayer player, @NotNull Product product){
+    public static void performDonation(OfflinePlayer player, @NotNull Product product) {
         performDonation(new QueueDonation(player, product));
     }
 
@@ -41,7 +41,7 @@ public class DonationAPI {
      *
      * @param donation - A {@link me.aglerr.donations.objects.QueueDonation}
      */
-    public static void performDonation(QueueDonation donation){
+    public static void performDonation(QueueDonation donation) {
         DonationPlugin.getInstance().getQueueManager()
                 .addQueue(donation);
     }
@@ -55,7 +55,7 @@ public class DonationAPI {
      * @param price - the price of the product
      * @param save - should we save the product to the configuration? (Recommended if you want product persist on restart)
      */
-    public static Product createProduct(String name, String displayName, double price, boolean save){
+    public static Product createProduct(String name, String displayName, double price, boolean save) {
         // Get the product manager
         ProductManager productManager = DonationPlugin.getInstance().getProductManager();
         // Create the product object

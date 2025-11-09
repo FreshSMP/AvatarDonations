@@ -12,6 +12,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 public class ImageMessage {
+
     private final static char TRANSPARENT_CHAR = ' ';
 
     private final Color[] colors = {
@@ -89,12 +90,12 @@ public class ImageMessage {
     private String[] toImgMessage(ChatColor[][] colors, char imgchar) {
         lines = new String[colors[0].length];
         for (int y = 0; y < colors[0].length; y++) {
-            String line = "";
-            for (int x = 0; x < colors.length; x++) {
-                ChatColor color = colors[x][y];
-                line += (color != null) ? colors[x][y].toString() + imgchar : TRANSPARENT_CHAR;
+            StringBuilder line = new StringBuilder();
+            for (ChatColor[] chatColors : colors) {
+                ChatColor color = chatColors[y];
+                line.append((color != null) ? chatColors[y].toString() + imgchar : TRANSPARENT_CHAR);
             }
-            lines[y] = line + ChatColor.RESET;
+            lines[y] = line.toString() + ChatColor.RESET;
         }
         return lines;
     }

@@ -2,8 +2,15 @@ package me.aglerr.donations;
 
 import com.muhammaddaffa.mdlib.MDLib;
 import com.muhammaddaffa.mdlib.utils.Config;
+import com.tcoded.folialib.FoliaLib;
+import com.tcoded.folialib.impl.PlatformScheduler;
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.CommandAPIPaperConfig;
 import me.aglerr.donations.commands.MainCommand;
-import me.aglerr.donations.managers.*;
+import me.aglerr.donations.managers.DependencyManager;
+import me.aglerr.donations.managers.DonationGoal;
+import me.aglerr.donations.managers.ProductManager;
+import me.aglerr.donations.managers.QueueManager;
 import me.aglerr.donations.metrics.Metrics;
 import me.aglerr.donations.utils.Utils;
 import net.skinsrestorer.api.SkinsRestorer;
@@ -12,6 +19,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class DonationPlugin extends JavaPlugin {
+
+    private static PlatformScheduler scheduler;
 
     public static Config DEFAULT_CONFIG, PRODUCT_CONFIG, DATA;
 
@@ -22,17 +31,27 @@ public class DonationPlugin extends JavaPlugin {
 
     private static DonationPlugin instance;
 
-    @Override
-    public void onLoad() {
-        MDLib.inject(this);
+    public static PlatformScheduler scheduler() {
+        return scheduler;
     }
 
     @Override
-    public void onEnable(){
+    public void onLoad() {
+        MDLib.inject(this);
+        CommandAPI.onLoad(new CommandAPIPaperConfig(this).silentLogs(false));
+    }
+
+    @Override
+    public void onEnable() {
         // Initialize the instance
         instance = this;
+        // Initialize Folia schedule handling
+        FoliaLib foliaLib = new FoliaLib(this);
+        scheduler = foliaLib.getScheduler();
         // Injecting the libs
         MDLib.onEnable(this);
+        // Instantiate CommandAPI
+        CommandAPI.onEnable();
         // Send startup logo
         Utils.sendStartupLogo();
         // Initialize the queue manager
@@ -47,6 +66,8 @@ public class DonationPlugin extends JavaPlugin {
         productManager.loadProduct();
         // Load the donation goal
         DonationGoal.onLoad();
+        // Register the main command
+        new MainCommand();
         // Register the command
         new MainCommand();
         // bStats metrics
@@ -60,8 +81,9 @@ public class DonationPlugin extends JavaPlugin {
     }
 
     @Override
-    public void onDisable(){
+    public void onDisable() {
         MDLib.shutdown();
+        CommandAPI.onDisable();
         DonationGoal.onSave();
     }
 
@@ -75,7 +97,7 @@ public class DonationPlugin extends JavaPlugin {
         Config.reload();
     }
 
-    public void reloadEverything(){
+    public void reloadEverything() {
         // Reload all configs
         DEFAULT_CONFIG.reloadConfig();
         PRODUCT_CONFIG.reloadConfig();
@@ -90,7 +112,6 @@ public class DonationPlugin extends JavaPlugin {
     public void resetDonation() {
         DonationGoal.reset();
     }
-
 
     public static DonationPlugin getInstance() {
         return instance;

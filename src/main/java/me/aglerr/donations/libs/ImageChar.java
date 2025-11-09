@@ -1,6 +1,7 @@
 package me.aglerr.donations.libs;
 
 public enum ImageChar {
+
     BLOCK('█'),
     DARK_SHADE('▓'),
     MEDIUM_SHADE('▒'),

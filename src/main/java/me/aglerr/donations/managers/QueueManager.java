@@ -1,6 +1,7 @@
 package me.aglerr.donations.managers;
 
-import com.muhammaddaffa.mdlib.utils.Executor;
+import com.tcoded.folialib.impl.PlatformScheduler;
+import me.aglerr.donations.DonationPlugin;
 import me.aglerr.donations.api.events.DonationPerformEvent;
 import me.aglerr.donations.objects.Product;
 import me.aglerr.donations.objects.QueueDonation;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QueueManager {
+
+    private static final PlatformScheduler scheduler = DonationPlugin.scheduler();
 
     private boolean IS_QUEUEING = false;
 
@@ -33,22 +36,21 @@ public class QueueManager {
         return this.queueDonations.remove(donation);
     }
 
-    protected void startAnnounceTask(){
-        Executor.asyncTimer(0L, 20L, () -> {
+    protected void startAnnounceTask() {
+        scheduler.runTimerAsync(() -> {
             // Return if still queueing
-            if(IS_QUEUEING) return;
+            if (IS_QUEUEING) return;
             // Return if the queue is empty
-            if(this.queueDonations.isEmpty()) return;
-            // If the the plugin isn't queueing and queue donations isn't empty
+            if (this.queueDonations.isEmpty()) return;
+            // If the plugin isn't queueing and queue donations isn't empty
             // Get the queue donations first entry
             QueueDonation donation = this.queueDonations.get(0);
             // Create the custom event
             DonationPerformEvent event = new DonationPerformEvent(donation);
             // Call the event in sync thread
-            Executor.sync(() -> Bukkit.getPluginManager().callEvent(event));
+            scheduler.runNextTick(task -> Bukkit.getPluginManager().callEvent(event));
             // Stop the code if the event is cancelled
-            if(event.isCancelled())
-                return;
+            if (event.isCancelled()) return;
             // Set the IS_QUEUEING to true
             IS_QUEUEING = true;
             // Announce the donation message
@@ -57,8 +59,7 @@ public class QueueManager {
             this.queueDonations.remove(donation);
             // Set the is queueing back to false
             IS_QUEUEING = false;
-        });
+        }, 1L, 20L);
     }
-
 
 }
